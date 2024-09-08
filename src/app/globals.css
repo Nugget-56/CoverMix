@@ -41,3 +41,39 @@
   font-optical-sizing: auto;
   font-style: normal;
 }
+
+.roller-focus {
+  font-size: 1.5rem;
+}
+
+.roller-text{
+  animation: roll 20s steps(5, end) infinite;
+}
+
+.roller-text > div {
+  animation: opacity 4s ease-in-out infinite;
+}
+
+@keyframes roll {
+  0% {
+    transform: translateY(0%);
+  }
+  100% {
+    transform: translateY(-100%);
+  }
+}
+
+@keyframes opacity {
+  0% {
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
