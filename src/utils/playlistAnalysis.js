@@ -31,16 +31,18 @@ export function analyzePlaylistFeatures(audioFeatures) {
 
     const mood = features.valence > 0.5 ? 'Positive' : 'Melancholic';
     const energy = features.energy > 0.5 ? 'Energetic' : 'Calm';
-    const danceability = features.danceability > 0.5 ? 'Danceable' : 'Less danceable';
     const acousticness = features.acousticness > 0.5 ? 'Acoustic' : 'Electronic';
+    const tempo = features.tempo > 120 ? 'Upbeat' : 'Chill';
+    const instrumentalness = features.instrumentalness > 0.5 ? 'Instrumental' : 'Vocal';
 
     return {
         averageFeatures: features,
         characteristics: {
             mood,
             energy,
-            danceability,
-            acousticness
+            acousticness,
+            tempo,
+            instrumentalness
         }
     };
 }

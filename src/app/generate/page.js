@@ -1,73 +1,124 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
+import { useState } from "react";
+import Image from "next/image";
+import localFont from 'next/font/local'
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Separator } from "@/components/ui/separator"
+import { Chart } from "@/utils/chart"
+import { ModeToggle } from "@/utils/themeToggle"
 
-async function query(data) {
-    const response = await fetch(
-        "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-dev",
-        {
-            headers: {
-                "Authorization": `Bearer ${process.env.NEXT_PUBLIC_IMAGE_GEN}`,
-                "Content-Type": "application/json",
-                "x-use-cache": "false"
-            },
-            method: "POST",
-            body: JSON.stringify(data),
-        }
-    );
-    if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
-    }
-    const result = await response.blob();
-    return result;
-}
+const clashLight = localFont({ src:'/../../../public/fonts/ClashDisplay-Light.woff2' })
+const clashReg = localFont({ src:'/../../../public/fonts/ClashDisplay-Regular.woff2' })
+const clashMed = localFont({ src:'/../../../public/fonts/ClashDisplay-Medium.woff2' })
 
 export default function Generate() {
-    const [imageSrc, setImageSrc] = useState('/placeholder.png');
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState(null);
+  const [generatedImage, setGeneratedImage] = useState("/placeholder.png");
+  const [isLoading, setIsLoading] = useState(false);
 
-    const handleGenerate = async () => {
-        setIsLoading(true);
-        setError(null);
-        
-        //const seed = Math.floor(Math.random() * 1000000) + 1;
-        const inputData = {
-            "inputs": "Create a cover art for a music playlist which has a mix of pop and rock music",
-            /*"parameters": {
-                "seed": seed
-            }*/
-        };
+  const handleGenerate = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch('/api/generate-image', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          prompt: "Create a cover art for a music playlist which has a mix of pop and rock music"
+        }),
+      });
 
-        try {
-            const response = await query(inputData);
-            const imageUrl = URL.createObjectURL(response);
-            setImageSrc(imageUrl);
-        } catch (error) {
-            console.error('Error:', error);
-            setError(error.message);
-        } finally {
-            setIsLoading(false);
-        }
-    };
+      if (!response.ok) {
+        throw new Error('Failed to generate image');
+      }
 
-    return (
-        <div className="p-4">
-            <h1 className="text-2xl font-bold mb-4">Generate Unique Image</h1>
-            <button 
-                onClick={handleGenerate}
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"
-                disabled={isLoading}
-            >
-                {isLoading ? 'Generating...' : 'Generate'}
-            </button>
-            {error && <p className="text-red-500 mb-4">{error}</p>}
-            <img 
-                src={imageSrc} 
-                alt="Generated image" 
-                className="w-[512px] h-[512px] object-cover"
-            />
+      const data = await response.json();
+      setGeneratedImage(data.image);
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Failed to generate image');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="flex flex-col pt-20 md:pt-8 min-h-screen lg:flex-row  items-center content-center justify-center gap-40 p-4 md:p-8 bg-background">
+      <div className="absolute top-0 right-0 p-6">
+        <ModeToggle />
+      </div>
+      <div className="flex flex-col min-h-max gap-6 w-full max-w-[400px] md:max-w-[500px] aspect-square rounded-lg">
+        <img
+          src="/placeholder.png"
+          alt="Playlist Cover Art"
+          width="500"
+          height="500"
+          className="w-full h-full object-cover"
+          style={{ aspectRatio: "500/500", objectFit: "cover" }}
+        />
+        <div className="flex items-center justify-center">
+          <Button onClick={handleGenerate} size="lg" className="text-white mr-4">
+            Regenerate
+          </Button>
+          <Button size="lg" className="text-white ml-4">
+            Set as cover
+          </Button>
         </div>
-    );
+      </div>
+      <div className="w-full max-w-[400px] space-y-6">
+        <div className="grid gap-2">
+          <h1 className="text-3xl font-bold">
+            Playlist Name
+          </h1>
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <span>120 Tracks</span>
+            <Separator orientation="vertical" className="h-4" />
+            <span>7h 24m</span>
+          </div>
+        </div>
+        <Card>
+          <CardHeader>
+            <CardTitle>Playlist Stats</CardTitle>
+          </CardHeader>
+          <CardContent className="grid gap-4">
+            <div className="flex items-center justify-between">
+              <div className="text-muted-foreground">Danceability</div>
+              <div className="font-medium">0.7</div>
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="text-muted-foreground">Energy</div>
+              <div className="font-medium">0.7</div>
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="text-muted-foreground">Speechiness</div>
+              <div className="font-medium">0.7</div>
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="text-muted-foreground">Acousticness</div>
+              <div className="font-medium">0.7</div>
+            </div>
+            <div className="flex items-center justify-between"> 
+                <div className="text-muted-foreground">Instrumentalness</div>
+                <div className="font-medium">0.7</div>
+            </div>
+            <div className="flex items-center justify-between"> 
+                <div className="text-muted-foreground">Liveness</div>
+                <div className="font-medium">0.7</div>
+            </div>
+            <div className="flex items-center justify-between"> 
+                <div className="text-muted-foreground">Valence</div>
+                <div className="font-medium">0.7</div>
+            </div>
+            <div className="flex items-center justify-between"> 
+                <div className="text-muted-foreground">Tempo</div>
+                <div className="font-medium">0.7</div>
+            </div>
+          </CardContent>
+        </Card>
+        <Chart />
+      </div>
+    </div>
+  );
 }

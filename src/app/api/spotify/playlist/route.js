@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getPlaylistTracks, getAudioFeatures } from '@/utils/spotifyApi';
+import { getPlaylistTracks, getAudioFeatures } from '@/utils/spotifyAuth';
 import { analyzePlaylistFeatures } from '@/utils/playlistAnalysis'; 
 import { generateCoverArtPrompt } from '@/utils/coverArtPrompt';
 
