@@ -17,12 +17,8 @@ function handleSpotifyError(error) {
     return new Error(`Error in Spotify API request: ${error.message}`);
 }
 
-export async function getAccessToken() {
-  return process.env.SPOTIFY_ACCESS_TOKEN;
-}
-
-export async function getPlaylistTracks(playlistId) {
-    const accessToken = process.env.SPOTIFY_ACCESS_TOKEN;
+export async function getPlaylistTracks(playlistId, accessToken) {
+    
     const apiUrl = `https://api.spotify.com/v1/playlists/${playlistId}/tracks?fields=items%28track%28id%29%29`;
 
     const config = {
@@ -39,8 +35,8 @@ export async function getPlaylistTracks(playlistId) {
     }
 }
 
-export async function getAudioFeatures(trackIds) {
-    const accessToken = process.env.SPOTIFY_ACCESS_TOKEN;
+export async function getAudioFeatures(trackIds, accessToken) {
+
     const apiUrl = `https://api.spotify.com/v1/audio-features?ids=${trackIds.join(',')}`;
 
     const config = {
@@ -55,4 +51,51 @@ export async function getAudioFeatures(trackIds) {
     } catch (error) {
         throw handleSpotifyError(error);
     }
+}
+
+export async function getPlaylistDetails(playlistId, accessToken) {
+  const apiUrl = `https://api.spotify.com/v1/albums/${playlistId}`;
+
+  const config = {
+    headers: {
+      'Authorization': `Bearer ${accessToken}`
+    }
+  };
+
+  try {
+    const response = await axios.get(apiUrl, config);
+
+    const data = {
+        name: response.data.name,
+        description: response.data.description,
+    }
+
+    return data;
+      
+  } catch (error) {
+    throw handleSpotifyError(error);
+  }
+
+}
+
+export async function setPlaylistCover(playlistId, imageUrl, accessToken) {
+  const apiUrl = `https://api.spotify.com/v1/playlists/${playlistId}/images`
+
+  const config = {
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'image/jpeg'
+    }
+  };
+
+  const data = {
+    url: imageUrl
+  }
+
+  try {
+    const response = await axios.put(apiUrl, data, config);
+    return response.data;
+  } catch (error) {
+    throw handleSpotifyError(error);
+  }
 }

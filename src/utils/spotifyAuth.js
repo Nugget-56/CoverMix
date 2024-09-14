@@ -91,17 +91,6 @@ export async function getAccessToken(code) {
   return data.access_token;
 }
 
-export function checkAndRefreshToken() {
-  const expiresAt = localStorage.getItem('expires_at');
-  if (!expiresAt || Date.now() > parseInt(expiresAt)) {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('expires_at');
-    redirectToSpotifyAuthorize();
-    return false;
-  }
-  return true;
-}
-
 export function getAccessTokenFromStorage() {
   const accessToken = localStorage.getItem('access_token');
   const expiresAt = localStorage.getItem('expires_at');
@@ -116,4 +105,3 @@ export function getAccessTokenFromStorage() {
 
   return accessToken;
 }
-

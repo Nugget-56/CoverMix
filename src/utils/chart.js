@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from "react";
 import { PolarAngleAxis, PolarGrid, Radar, RadarChart } from "recharts"
 import {
   Card,
@@ -16,16 +17,6 @@ import {
 
 export const description = "A radar chart"
 
-const chartData = [
-  { Stat: "Danceability", Value: 0.5 },
-  { Stat: "Energy", Value: 0.5 },
-  { Stat: "Speechiness", Value: 0.5 },
-  { Stat: "Acousticness", Value: 0.5 },
-  { Stat: "Instrumentalness", Value: 0.5 },
-  { Stat: "Liveness", Value: 0.5 },
-  { Stat: "Valence", Value: 0.5 },
-  { Stat: "Tempo", Value: 0.5 },
-]
 
 const chartConfig = {
   desktop: {
@@ -35,6 +26,31 @@ const chartConfig = {
 }
 
 export function Chart() {
+  const [chartData, setChartData] = useState([
+    { Stat: "Danceability", Value: 0.5 },
+    { Stat: "Energy", Value: 0.5 },
+    { Stat: "Speechiness", Value: 0.5 },
+    { Stat: "Acousticness", Value: 0.5 },
+    { Stat: "Instrumentalness", Value: 0.5 },
+    { Stat: "Liveness", Value: 0.5 },
+    { Stat: "Valence", Value: 0.5 },
+    { Stat: "Tempo", Value: 0.5 },
+  ]);
+
+  useEffect(() => {
+    const playlistFeatures = JSON.parse(localStorage.getItem('playlistFeatures'));
+    setChartData([
+      { Stat: "Danceability", Value: playlistFeatures.averageFeatures.danceability || 0 },
+      { Stat: "Energy", Value: playlistFeatures.averageFeatures.energy || 0 },
+      { Stat: "Speechiness", Value: playlistFeatures.averageFeatures.speechiness || 0 },
+      { Stat: "Acousticness", Value: playlistFeatures.averageFeatures.acousticness },
+      { Stat: "Instrumentalness", Value: playlistFeatures.averageFeatures.instrumentalness || 0 },
+      { Stat: "Liveness", Value: playlistFeatures.averageFeatures.liveness || 0 },
+      { Stat: "Valence", Value: playlistFeatures.averageFeatures.valence || 0 },
+      { Stat: "Tempo", Value: (playlistFeatures.averageFeatures.tempo / 200)|| 0 },
+    ]);
+  }, []);
+
   return (
     <Card>
       <CardHeader className="items-center pb-4">
@@ -45,7 +61,7 @@ export function Chart() {
       <CardContent className="pb-0">
         <ChartContainer
           config={chartConfig}
-          className="mx-auto aspect-square max-h-[250px]"
+          className="mx-auto max-h-[400px] aspect-[6/4]"
         >
           <RadarChart data={chartData}>
             <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
