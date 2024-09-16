@@ -1,24 +1,28 @@
 export function generateCoverArtPrompt(playlistAnalysis) {
-    const { averageFeatures, characteristics } = playlistAnalysis;
+  const { averageFeatures } = playlistAnalysis;
 
-    // Colour scheme
-    const colorScheme = characteristics.mood === 'Positive' 
-        ? (characteristics.energy === 'Energetic' ? 'vibrant and warm' : 'soft and warm')
-        : (characteristics.energy === 'Energetic' ? 'bold and cool' : 'muted and cool');
+  if (averageFeatures.instrumentalness > 0.5) {
+    return 'Create a high quality, realistic art in an instrumental and musical aesthetic, pinterest style, dark room colours'
+  }
 
-    // Style
-    const style = characteristics.instrumentalness === 'Instrumental'
-        ? (characteristics.acousticness === 'Acoustic' ? 'organic and natural' : 'electronic and abstract')
-        : (characteristics.acousticness === 'Acoustic' ? 'organic and calm' : 'futuristic and digital');
+  // Colour scheme
+  const colourIntensity = averageFeatures.energy > 0.66 ? 'vibrant' : 
+                          averageFeatures.energy > 0.33 ? 'moderately bright' : 'muted';
+  const colourTemp = averageFeatures.valence > 0.4 ? 'warm' : 'cool';
+  const colorScheme = `${colourIntensity} and ${colourTemp}`;
 
-    const elements = averageFeatures.valence >= 0.6 
-        ? 'uplifting imagery'
-        : 'melancholic imagery';
+  // Style
+  const compositionFlow = averageFeatures.danceability > 0.5 ? 'dynamic and flowing' : 'structured and balanced';
 
-    // Construct the prompt
-    const prompt = `Create a playlist cover art `;
+  const mood = averageFeatures.valence > 0.4 ? 
+               averageFeatures.loudness > -10 ? 'exuberant and lively' : 'cheerful and gentle' :
+               averageFeatures.loudness > -10 ? 'powerful and dramatic' : 'subtle and introspective';
 
-    return prompt;
+
+  // Construct the prompt
+  const prompt = `Create a high quality, realistic art in an instrumental and musical aesthetic, pinterest style, dark room colours`;
+
+  return prompt;
 }
 
 //Create a high quality playlist cover art in country style and warm, fuzzy colour scheme. The image should evoke a relaxing and calm  mood

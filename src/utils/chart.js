@@ -32,7 +32,7 @@ export function Chart() {
     { Stat: "Speechiness", Value: 0.5 },
     { Stat: "Acousticness", Value: 0.5 },
     { Stat: "Instrumentalness", Value: 0.5 },
-    { Stat: "Liveness", Value: 0.5 },
+    { Stat: "Loudness", Value: 0.5 },
     { Stat: "Valence", Value: 0.5 },
     { Stat: "Tempo", Value: 0.5 },
   ]);
@@ -45,7 +45,7 @@ export function Chart() {
       { Stat: "Speechiness", Value: playlistFeatures.averageFeatures.speechiness || 0 },
       { Stat: "Acousticness", Value: playlistFeatures.averageFeatures.acousticness },
       { Stat: "Instrumentalness", Value: playlistFeatures.averageFeatures.instrumentalness || 0 },
-      { Stat: "Liveness", Value: playlistFeatures.averageFeatures.liveness || 0 },
+      { Stat: "Loudness", Value: playlistFeatures.averageFeatures.loudness / -60|| 0 },
       { Stat: "Valence", Value: playlistFeatures.averageFeatures.valence || 0 },
       { Stat: "Tempo", Value: (playlistFeatures.averageFeatures.tempo / 200)|| 0 },
     ]);

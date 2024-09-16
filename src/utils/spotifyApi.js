@@ -17,9 +17,11 @@ function handleSpotifyError(error) {
     return new Error(`Error in Spotify API request: ${error.message}`);
 }
 
-export async function getPlaylistTracks(playlistId, accessToken) {
+export async function getPlaylist(playlistId, accessToken) {
     
-    const apiUrl = `https://api.spotify.com/v1/playlists/${playlistId}/tracks?fields=items%28track%28id%29%29`;
+    //const apiUrl = `https://api.spotify.com/v1/playlists/${playlistId}/tracks?fields=items%28track%28id%29%29`;
+
+    const apiUrl = `https://api.spotify.com/v1/playlists/${playlistId}?fields=name%2Ctracks%28total%2Citems%28track%28id%29%29%29`;
 
     const config = {
         headers: {
@@ -29,7 +31,13 @@ export async function getPlaylistTracks(playlistId, accessToken) {
 
     try {
         const response = await axios.get(apiUrl, config);
-        return response.data.items.map(item => item.track?.id).filter(Boolean);
+        const data = {
+            name: response.data.name,
+            totalTracks: response.data.tracks.total,
+            tracks: response.data.tracks.items.map(item => item.track?.id).filter(Boolean)
+        }
+        return data;
+        //return response.data.items.map(item => item.track?.id).filter(Boolean);
     } catch (error) {
         throw handleSpotifyError(error);
     }

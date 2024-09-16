@@ -5,7 +5,7 @@ export function analyzePlaylistFeatures(audioFeatures) {
         speechiness: 0,
         acousticness: 0,
         instrumentalness: 0,
-        liveness: 0,
+        loudness: 0,
         valence: 0,
         tempo: 0
     };
@@ -19,7 +19,7 @@ export function analyzePlaylistFeatures(audioFeatures) {
         features.speechiness += feature.speechiness;
         features.acousticness += feature.acousticness;
         features.instrumentalness += feature.instrumentalness;
-        features.liveness += feature.liveness;
+        features.loudness += feature.loudness;
         features.valence += feature.valence;
         features.tempo += feature.tempo;
     }); 
@@ -29,11 +29,55 @@ export function analyzePlaylistFeatures(audioFeatures) {
         features[feature] /= trackCount;
     }
 
-    const mood = features.valence > 0.5 ? 'Positive' : 'Melancholic';
-    const energy = features.energy > 0.5 ? 'Energetic' : 'Calm';
-    const acousticness = features.acousticness > 0.5 ? 'Acoustic' : 'Electronic';
-    const tempo = features.tempo > 120 ? 'Upbeat' : 'Chill';
-    const instrumentalness = features.instrumentalness > 0.5 ? 'Instrumental' : 'Vocal';
+    const getMood = (valence) => {
+        if (valence > 0.7) return 'Euphoric';
+        if (valence > 0.5) return 'Positive';
+        if (valence > 0.2) return 'Melancholic';
+        return 'Somber';
+    };
+    
+    const getEnergy = (energy) => {
+        if (energy > 0.7) return 'Explosive';
+        if (energy > 0.5) return 'Energetic';
+        if (energy > 0.2) return 'Calm';
+        return 'Tranquil';
+    };
+    
+    const getAcousticness = (acousticness) => {
+        if (acousticness > 0.6) return 'Acoustic';
+        if (acousticness > 0.4) return 'Balanced';
+        return 'Electronic';
+    };
+    
+    const getTempo = (tempo) => {
+        if (tempo > 160) return 'Frenetic';
+        if (tempo > 140) return 'Upbeat';
+        if (tempo > 110) return 'Energetic';
+        if (tempo > 90) return 'Relaxed';
+        return 'Slow';
+    };
+    
+    const getInstrumentalness = (instrumentalness) => {
+        if (instrumentalness > 0.45) return 'Instrumental';
+        if (instrumentalness > 0.3) return 'Balanced';
+        return 'Vocal';
+    };
+    
+    const getIntensity = (loudness) => {
+        if (loudness > -4) return 'Very Intense';
+        if (loudness > -8) return 'Intense';
+        if (loudness > -12) return 'Moderate';
+        if (loudness > -16) return 'Soft';
+        return 'Very Soft';
+    };
+    
+    // In the analyzePlaylistFeatures function:
+    const mood = getMood(features.valence);
+    const energy = getEnergy(features.energy);
+    const acousticness = getAcousticness(features.acousticness);
+    const tempo = getTempo(features.tempo);
+    const instrumentalness = getInstrumentalness(features.instrumentalness);
+    const intensity = getIntensity(features.loudness);
 
     return {
         averageFeatures: features,
@@ -42,7 +86,8 @@ export function analyzePlaylistFeatures(audioFeatures) {
             energy,
             acousticness,
             tempo,
-            instrumentalness
+            instrumentalness,
+            intensity
         }
     };
 }

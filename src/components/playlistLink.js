@@ -4,9 +4,10 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useRouter } from "next/navigation";
-import { getPlaylistTracks, getAudioFeatures } from "@/utils/spotifyApi";
+import { getPlaylist, getAudioFeatures } from "@/utils/spotifyApi";
 import { analyzePlaylistFeatures } from "@/utils/playlistAnalysis";
 import { generateCoverArtPrompt } from "@/utils/coverArtPrompt";
+import { generateImage } from "@/utils/generateApi";
 
 export default function playlistLink({setIsLoggedIn}) {
     const [playlistUrl, setPlaylistUrl] = useState('');
@@ -21,6 +22,8 @@ export default function playlistLink({setIsLoggedIn}) {
       localStorage.removeItem('access_token');
       localStorage.removeItem('expires_at');
       localStorage.removeItem('playlistFeatures');
+      localStorage.removeItem('playlist')
+      localStorage.removeItem('imageURL')
       setIsLoggedIn(false);
     }
 
@@ -38,18 +41,28 @@ export default function playlistLink({setIsLoggedIn}) {
       const accessToken = localStorage.getItem('access_token');
       const playlistId = playlistUrl.split('/').pop().split('?')[0];
 
-      const playlistTracks = await getPlaylistTracks(playlistId, accessToken);
+      const playlist = await getPlaylist(playlistId, accessToken);
+
+      const playlistTracks = playlist.tracks;
+      const playlistName = playlist.name;
+      const playlistTotalTracks = playlist.totalTracks;
+
+      localStorage.setItem('playlist', JSON.stringify({
+        name: playlistName,
+        totalTracks: playlistTotalTracks
+      }));
+      
       const audioFeatures = await getAudioFeatures(playlistTracks, accessToken);
       const playlistFeatures = analyzePlaylistFeatures(audioFeatures);
 
       localStorage.setItem('playlistFeatures', JSON.stringify(playlistFeatures));
 
-      router.push('/generate');
-
       const prompt = generateCoverArtPrompt(playlistFeatures);
-      console.log(prompt);
+      const imageURL = await generateImage(prompt);
 
-      generateImage(prompt);
+      localStorage.setItem('imageURL', imageURL);
+
+      router.push('/generate');
       
       setIsLoading(false);
     }
@@ -59,6 +72,7 @@ export default function playlistLink({setIsLoggedIn}) {
         <form onSubmit={handleGenerate} className="flex flex-col md:flex-row w-full max-w-md md:items-start items-center space-y-4 md:space-y-0 md:space-x-4">
           <div className="flex flex-col w-full">
             <Input 
+              name="Playlist"
               onChange={(e) => setPlaylistUrl(e.target.value)} 
               type="text" 
               placeholder="Enter Spotify playlist URL" 
