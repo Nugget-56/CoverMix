@@ -4,10 +4,10 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useRouter } from "next/navigation";
-import { getPlaylist, getAudioFeatures } from "@/utils/spotifyApi";
-import { analyzePlaylistFeatures } from "@/utils/playlistAnalysis";
-import { generateCoverArtPrompt } from "@/utils/coverArtPrompt";
-import { generateImage } from "@/utils/generateApi";
+import { getPlaylist, getAudioFeatures } from "@/utils/spotify/spotifyApi";
+import { analyzePlaylistFeatures } from "@/utils/coverMix/playlistAnalysis";
+import { generateCoverArtPrompt } from "@/utils/coverMix/coverArtPrompt";
+import { generateImage } from "@/utils/coverMix/generateApi";
 
 export default function playlistLink({setIsLoggedIn}) {
     const [playlistUrl, setPlaylistUrl] = useState('');

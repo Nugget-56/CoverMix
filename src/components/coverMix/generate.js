@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth"
-import { generateImage } from "@/utils/generateApi"
-import { generateCoverArtPrompt } from "@/utils/coverArtPrompt"
+import { generateImage } from "@/utils/coverMix/generateApi"
+import { generateCoverArtPrompt } from "@/utils/coverMix/coverArtPrompt"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
