@@ -1,4 +1,4 @@
-import LandingPage from "@/components/home"
+import LandingPage from "@/components/coverMix/home"
 
 export default function Home() {
   return (

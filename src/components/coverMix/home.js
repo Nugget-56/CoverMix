@@ -6,11 +6,11 @@ import localFont from 'next/font/local'
 import { ModeToggle } from "@/utils/themeToggle"
 import { Button } from "@/components/ui/button"
 import { redirectToSpotifyAuthorize, getAccessTokenFromStorage } from "@/utils/spotifyAuth";
-import PlaylistLink from "@/components/playlistLink";
+import PlaylistLink from "@/components/coverMix/playlistLink";
 import Footer from "@/components/footer"
 
-const clashLight = localFont({ src:'/../../public/fonts/ClashDisplay-Light.woff2' })
-const clashReg = localFont({ src:'/../../public/fonts/ClashDisplay-Regular.woff2' })
+const clashLight = localFont({ src:'/../../../public/fonts/ClashDisplay-Light.woff2' })
+const clashReg = localFont({ src:'/../../../public/fonts/ClashDisplay-Regular.woff2' })
 
 export default function LandingPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);

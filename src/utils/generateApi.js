@@ -15,7 +15,6 @@ export async function generateImage(prompt) {
     }
 
     const data = await response.blob();
-    console.log(data);
     const image = URL.createObjectURL(data);
     return image;
   } catch (error) {

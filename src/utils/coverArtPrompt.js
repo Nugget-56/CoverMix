@@ -1,5 +1,5 @@
 export function generateCoverArtPrompt(playlistAnalysis) {
-  const { averageFeatures } = playlistAnalysis;
+  const { averageFeatures } = playlistAnalysis; 
 
   if (averageFeatures.instrumentalness > 0.5) {
     return 'Create a high quality, realistic art in an instrumental and musical aesthetic, pinterest style, dark room colours'
@@ -20,7 +20,7 @@ export function generateCoverArtPrompt(playlistAnalysis) {
 
 
   // Construct the prompt
-  const prompt = `Create a high quality, realistic art in an instrumental and musical aesthetic, pinterest style, dark room colours`;
+  const prompt = `Create high quality art in ${colorScheme} colour scheme, pinterest style, chill mood`;
 
   return prompt;
 }
@@ -33,4 +33,5 @@ export function generateCoverArtPrompt(playlistAnalysis) {
 
 //Create a high quality, realistic looking art in an sky aesthetic, pinterest style. The image should evoke a relaxing and euphoric mood
 
-//
+//Create high-quality art with a moderately bright and cool color palette. The composition should be dynamic and flowing, featuring a vintage-inspired style with sleek surfaces and geometric patterns. Evoke a contemplative and somber mood with a sense of movement and rhythm. Incorporate visual metaphors for vocal performances without using any text or explicit musical notation. The overall aesthetic should reflect an electronic and calm vibe, suitable for an upbeat playlist.
+

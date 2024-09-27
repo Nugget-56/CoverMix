@@ -58,12 +58,11 @@ export default function playlistLink({setIsLoggedIn}) {
       localStorage.setItem('playlistFeatures', JSON.stringify(playlistFeatures));
 
       const prompt = generateCoverArtPrompt(playlistFeatures);
+
       const imageURL = await generateImage(prompt);
-
       localStorage.setItem('imageURL', imageURL);
-
-      router.push('/generate');
       
+      router.push('/generate');
       setIsLoading(false);
     }
     

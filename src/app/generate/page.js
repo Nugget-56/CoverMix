@@ -1,4 +1,4 @@
-import Generate from "@/components/generate"
+import Generate from "@/components/coverMix/generate"
 
 export default function GeneratePage() {
     return (

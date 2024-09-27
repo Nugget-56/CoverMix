@@ -3,17 +3,21 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useAuth } from "@/hooks/useAuth"
+import { generateImage } from "@/utils/generateApi"
+import { generateCoverArtPrompt } from "@/utils/coverArtPrompt"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Chart } from "@/utils/chart"
 import { ModeToggle } from "@/utils/themeToggle"
-import { useAuth } from "@/hooks/useAuth"
+import { Loader2 } from "lucide-react"
 
 export default function Generate() {
   const [generatedImage, setGeneratedImage] = useState("/placeholder.png");
   const [isLoading, setIsLoading] = useState(false);
   const [playlist, setPlaylist] = useState(null);
+  const [prompt, setPrompt] = useState("");
   const [characteristics, setCharacteristics] = useState({
     mood: "",
     energy: "",
@@ -26,45 +30,25 @@ export default function Generate() {
 
   useEffect(() => {
     const playlist = JSON.parse(localStorage.getItem('playlist'));
-    const characteristics = JSON.parse(localStorage.getItem('playlistFeatures')).characteristics;
-    //const generatedImage = JSON.parse(localStorage.getItem('imageURL')).blob;
+    const playlistFeatures = JSON.parse(localStorage.getItem('playlistFeatures'));
+    const characteristics = playlistFeatures.characteristics;
+    const prompt = generateCoverArtPrompt(playlistFeatures);
+    const generatedImage = localStorage.getItem('imageURL');
 
     setPlaylist(playlist);
     setCharacteristics(characteristics);
-    //setGeneratedImage(generatedImage);
+    setPrompt(prompt);
+    setGeneratedImage(generatedImage);
   }, []);
 
   const handleGenerate = async () => {
     setIsLoading(true);
-    try {
-        if (generatedImage && generatedImage.startsWith('blob:')) {
-            URL.revokeObjectURL(generatedImage);
-        } 
-        
-        const response = await fetch('/api/generate-image', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          prompt: "Create a high quality art in country style and warm, fuzzy colour scheme. The image should evoke a relaxing and calm  mood"
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to generate image');
-      }
-
-      const data = await response.blob();
-      const image = URL.createObjectURL(data);
-      setGeneratedImage(image);
-      console.log(image);
-    } catch (error) {
-      console.error('Error:', error);
-      alert('Failed to generate image');
-    } finally {
-      setIsLoading(false);
-    }
+    if (generatedImage && generatedImage.startsWith('blob:')) {
+        URL.revokeObjectURL(generatedImage);
+    } 
+    const newImage = await generateImage(prompt);
+    setGeneratedImage(newImage);
+    setIsLoading(false);
   };
 
   if (!isLoggedIn) {
@@ -72,10 +56,10 @@ export default function Generate() {
   }
 
   return (
-    <div className="flex flex-col pt-20 md:pt-8 min-h-screen lg:flex-row  items-center content-center justify-center gap-40 p-4 md:p-8 bg-background">
+    <div className="flex flex-col pt-20 min-h-screen lg:flex-row items-center justify-center gap-20 lg:gap-40 p-4 lg:pt-6 bg-background">
       <div className="absolute top-0 left-0 p-6">
         <Link href="/">
-          <Button variant="outline" size="lg" className="text-white mr-4">
+          <Button variant="outline" size="lg" className="mr-4">
             Back
           </Button>
         </Link>
@@ -83,24 +67,35 @@ export default function Generate() {
       <div className="absolute top-0 right-0 p-6">
         <ModeToggle />
       </div>
-      <div className="flex flex-col min-h-max gap-6 w-full max-w-[400px] md:max-w-[500px] aspect-square rounded-lg">
-        <Image
-          src={generatedImage}
-          alt="Playlist Cover Art"
-          width="500"
-          height="500"
-          className="w-full h-full object-cover"
-          style={{ aspectRatio: "500/500", objectFit: "cover" }}
-          priority
-        />
-        <div className="flex items-center justify-center">
-          <Button onClick={handleGenerate} size="lg" className="text-white mr-4">
-            Regenerate
+      <div className="flex flex-col min-h-max gap-10 w-full max-w-[400px] md:max-w-[500px] rounded-lg">
+        {isLoading ? (
+          <div className="flex w-full aspect-square items-center justify-center border-[1px] border-foreground">
+            <Loader2 className="w-8 h-8 animate-spin" />
+          </div>
+        ) : (
+          <Image
+            src={generatedImage}
+            alt="Playlist Cover Art"
+            width="500"
+            height="500"
+            className="w-full h-full object-cover"
+            style={{ aspectRatio: "500/500", objectFit: "cover" }}
+            onError={() => setGeneratedImage("/placeholder.png")}
+            priority
+          />
+        )}
+        <div className="flex items-center justify-center gap-4 md:gap-8">
+          <Button onClick={handleGenerate} size="lg" disabled={isLoading}>
+            {isLoading ? "Generating..." : "Regenerate"}
           </Button>
-         
+          {/*<Button variant="spotify" size="lg" disabled={isLoading}>Set as cover</Button>*/}
+        </div>
+        <div className="flex items-center gap-4 md:gap-6 justify-center">
+          Not liking what you see?
+          <Button variant="secondary" disabled={isLoading}>Edit prompt</Button>
         </div>
       </div>
-      <div className="w-full max-w-[400px] space-y-4">
+      <div className="w-full max-w-[500px] space-y-4">
         <div className="grid gap-2 rounded-sm bg-[url('/gradient.jpg')] bg-cover p-3 text-black">
           <h1 className="text-3xl font-bold">
             {playlist.name}

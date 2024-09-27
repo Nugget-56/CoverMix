@@ -25,7 +25,7 @@ export async function POST(request) {
 
     //const arrayBuffer = await result.arrayBuffer();
     //const base64Image = Buffer.from(arrayBuffer).toString('base64');
-    // return NextResponse.json({ image: `${base64Image}` });
+    //return NextResponse.json({ image: `${base64Image}` });
 
     console.log(result);
 
