@@ -2,7 +2,7 @@ const clientId = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID;
 const redirectUrl = process.env.NEXT_PUBLIC_SPOTIFY_REDIRECT_URI;
 const authorizationEndpoint = "https://accounts.spotify.com/authorize";
 const tokenEndpoint = "https://accounts.spotify.com/api/token";
-const scope = 'user-read-email playlist-read-private';
+const scope = 'user-read-email playlist-read-private user-library-read';
 
 function base64UrlEncode(hashed) {
   return btoa(String.fromCharCode(...new Uint8Array(hashed)))

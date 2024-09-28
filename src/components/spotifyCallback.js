@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { getAccessToken } from '@/utils/spotifyAuth';
+import { getAccessToken } from '@/utils/spotify/spotifyAuth';
 
 export default function CallbackPage() {
   const router = useRouter();

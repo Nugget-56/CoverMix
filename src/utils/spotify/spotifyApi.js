@@ -11,16 +11,11 @@ function handleSpotifyError(error) {
         } else if (error.response.status === 429) {
             return new Error('Rate Limit Exceeded: Too many requests to Spotify API');
         }
-    } else if (error.request) {
-        return new Error('No response received from Spotify API');
     }
     return new Error(`Error in Spotify API request: ${error.message}`);
 }
 
 export async function getPlaylist(playlistId, accessToken) {
-    
-    //const apiUrl = `https://api.spotify.com/v1/playlists/${playlistId}/tracks?fields=items%28track%28id%29%29`;
-
     const apiUrl = `https://api.spotify.com/v1/playlists/${playlistId}?fields=name%2Ctracks%28total%2Citems%28track%28id%29%29%29`;
 
     const config = {
@@ -44,7 +39,6 @@ export async function getPlaylist(playlistId, accessToken) {
 }
 
 export async function getAudioFeatures(trackIds, accessToken) {
-
     const apiUrl = `https://api.spotify.com/v1/audio-features?ids=${trackIds.join(',')}`;
 
     const config = {
@@ -59,31 +53,6 @@ export async function getAudioFeatures(trackIds, accessToken) {
     } catch (error) {
         throw handleSpotifyError(error);
     }
-}
-
-export async function getPlaylistDetails(playlistId, accessToken) {
-  const apiUrl = `https://api.spotify.com/v1/albums/${playlistId}`;
-
-  const config = {
-    headers: {
-      'Authorization': `Bearer ${accessToken}`
-    }
-  };
-
-  try {
-    const response = await axios.get(apiUrl, config);
-
-    const data = {
-        name: response.data.name,
-        description: response.data.description,
-    }
-
-    return data;
-      
-  } catch (error) {
-    throw handleSpotifyError(error);
-  }
-
 }
 
 export async function setPlaylistCover(playlistId, imageUrl, accessToken) {
@@ -107,3 +76,31 @@ export async function setPlaylistCover(playlistId, imageUrl, accessToken) {
     throw handleSpotifyError(error);
   }
 }
+
+//---------------Mini Mix-----------------------------------------
+
+export async function getLikedSongs(accessToken) {
+    
+  const apiUrl = `https://api.spotify.com/v1/me/tracks?limit=50`;
+
+  const config = {
+    headers: {
+      'Authorization': `Bearer ${accessToken}`
+    }
+  };
+
+  let allSongs = [];
+  let nextUrl = apiUrl;
+
+  try {
+    while (nextUrl) {
+      const response = await axios.get(nextUrl, config);
+      allSongs = allSongs.concat(response.data.items.map(item => item.track.name));
+      nextUrl = response.data.next; 
+    }
+    return allSongs;
+  } catch (error) {
+    throw handleSpotifyError(error);
+  } 
+}
+

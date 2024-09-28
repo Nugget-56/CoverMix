@@ -5,7 +5,7 @@ import Image from "next/image";
 import localFont from 'next/font/local'
 import { ModeToggle } from "@/utils/themeToggle"
 import { Button } from "@/components/ui/button"
-import { redirectToSpotifyAuthorize, getAccessTokenFromStorage } from "@/utils/spotifyAuth";
+import { redirectToSpotifyAuthorize, getAccessTokenFromStorage } from "@/utils/spotify/spotifyAuth";
 import PlaylistLink from "@/components/coverMix/playlistLink";
 import Footer from "@/components/footer"
 
