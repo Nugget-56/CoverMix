@@ -80,7 +80,6 @@ export async function setPlaylistCover(playlistId, imageUrl, accessToken) {
 //---------------Mini Mix-----------------------------------------
 
 export async function getLikedSongs(accessToken) {
-    
   const apiUrl = `https://api.spotify.com/v1/me/tracks?limit=50`;
 
   const config = {
@@ -95,7 +94,14 @@ export async function getLikedSongs(accessToken) {
   try {
     while (nextUrl) {
       const response = await axios.get(nextUrl, config);
-      allSongs = allSongs.concat(response.data.items.map(item => item.track.name));
+      const songs = response.data.items.map(item => ({
+        id: item.track.id,
+        name: item.track.name,
+        artist: item.track.artists[0].id,
+        release_year: item.track.album.release_date.slice(0, 4),
+        added_at: item.added_at
+      }));
+      allSongs = allSongs.concat(songs);
       nextUrl = response.data.next; 
     }
     return allSongs;
@@ -103,4 +109,64 @@ export async function getLikedSongs(accessToken) {
     throw handleSpotifyError(error);
   } 
 }
+
+export async function getSongGenres(artistIds, accessToken) {
+  const apiUrl = `https://api.spotify.com/v1/artists?ids=${artistIds.join(',')}`;
+
+  const config = {
+    headers: {
+      'Authorization': `Bearer ${accessToken}`
+    }
+  };
+
+  try {
+    const response = await axios.get(apiUrl, config);
+    const genres = response.data.artists.map(artist => artist.genres);
+    return genres;
+  } catch (error) {
+    throw handleSpotifyError(error);
+  }
+}
+
+
+//Splitting functions-------------
+export async function splitByDecade(songs) {
+  const decades = {
+    2020: [],
+    2010: [],
+    2000: [],
+    1990: [],
+    1980: [],
+    1970: [],
+    1960: []
+  };
+
+  for(const song of songs){
+    const releaseDecade = Math.floor(parseInt(song.release_year) / 10) * 10;
+    if(decades[releaseDecade]){
+      const songData = {
+        id: song.id,
+        name: song.name,
+      }
+      decades[releaseDecade].push(songData);
+    }
+  }
+  return decades;
+}
+
+export async function splitByGenre(songs, accessToken) {
+  const genresArray = {
+    'rock': [],
+    'pop': [],
+    'hip-hop': [], 
+    'electronic': [],
+    'country': [],
+  }
+
+  const artistIds = songs.map(song => song.artist);
+  const genres = await getSongGenres(artistIds, accessToken);
+
+  return genres;
+}
+
 
