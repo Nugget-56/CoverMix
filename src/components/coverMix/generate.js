@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Chart } from "@/utils/chart"
-import { ModeToggle } from "@/utils/themeToggle"
+import { ModeToggle } from "@/components/theme/themeToggle"
 import { Loader2 } from "lucide-react"
 
 export default function Generate() {
@@ -20,7 +20,7 @@ export default function Generate() {
   const [prompt, setPrompt] = useState("");
   const [characteristics, setCharacteristics] = useState({
     mood: "",
-    energy: "",
+    energy: "", 
     acousticness: "",
     tempo: "",
     instrumentalness: "",
@@ -52,21 +52,13 @@ export default function Generate() {
   };
 
   if (!isLoggedIn) {
-    return null;
+    return (
+      <div>Loading...</div>
+    );
   }
 
   return (
     <div className="flex flex-col pt-20 min-h-screen lg:flex-row items-center justify-center gap-20 lg:gap-40 p-4 lg:pt-6 bg-background">
-      <div className="absolute top-0 left-0 p-6">
-        <Link href="/">
-          <Button variant="outline" size="lg" className="mr-4">
-            Back
-          </Button>
-        </Link>
-      </div>
-      <div className="absolute top-0 right-0 p-6">
-        <ModeToggle />
-      </div>
       <div className="flex flex-col min-h-max gap-10 w-full max-w-[400px] md:max-w-[500px] rounded-lg">
         {isLoading ? (
           <div className="flex w-full aspect-square items-center justify-center border-[1px] border-foreground">

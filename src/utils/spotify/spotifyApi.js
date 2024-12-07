@@ -1,18 +1,18 @@
 import axios from 'axios';
 
 function handleSpotifyError(error) {
-    if (error.response) {
-        if (error.response.status === 401) {
-            return new Error('Unauthorized: Access token is invalid or expired. Please log in again.');
-        } else if (error.response.status === 403) {
-            return new Error('Forbidden: Insufficient permissions to access this resource');
-        } else if (error.response.status === 404) {
-            return new Error('Not Found: The specified resource does not exist');
-        } else if (error.response.status === 429) {
-            return new Error('Rate Limit Exceeded: Too many requests to Spotify API');
-        }
+  if (error.response) {
+    if (error.response.status === 401) {
+      return 'Unauthorized: Access token is invalid or expired. Please log in again.';
+    } else if (error.response.status === 403) {
+      return 'Forbidden: Insufficient permissions to access this resource';
+    } else if (error.response.status === 404) {
+      return 'Not Found: The specified resource does not exist';
+    } else if (error.response.status === 429) {
+      return 'Rate Limit Exceeded: Too many requests to Spotify API';
     }
-    return new Error(`Error in Spotify API request: ${error.message}`);
+  }
+  return `Error in Spotify API request: ${error.message}`;
 }
 
 export async function getPlaylist(playlistId, accessToken) {
@@ -31,10 +31,10 @@ export async function getPlaylist(playlistId, accessToken) {
             totalTracks: response.data.tracks.total,
             tracks: response.data.tracks.items.map(item => item.track?.id).filter(Boolean)
         }
-        return data;
+        return {data, error: null};
         //return response.data.items.map(item => item.track?.id).filter(Boolean);
     } catch (error) {
-        throw handleSpotifyError(error);
+        return {data: null, error: handleSpotifyError(error)};
     }
 }
 
@@ -49,9 +49,9 @@ export async function getAudioFeatures(trackIds, accessToken) {
 
     try {
         const response = await axios.get(apiUrl, config);
-        return response.data.audio_features;
+        return {data: response.data.audio_features, error: null};
     } catch (error) {
-        throw handleSpotifyError(error);
+        return {data: null, error: handleSpotifyError(error)};
     }
 }
 
@@ -71,9 +71,9 @@ export async function setPlaylistCover(playlistId, imageUrl, accessToken) {
 
   try {
     const response = await axios.put(apiUrl, data, config);
-    return response.data;
+    return {data: response.data, error: null};
   } catch (error) {
-    throw handleSpotifyError(error);
+    return {data: null, error: handleSpotifyError(error)};
   }
 }
 
@@ -104,9 +104,9 @@ export async function getLikedSongs(accessToken) {
       allSongs = allSongs.concat(songs);
       nextUrl = response.data.next; 
     }
-    return allSongs;
+    return {data: allSongs, error: null};
   } catch (error) {
-    throw handleSpotifyError(error);
+    return {data: null, error: handleSpotifyError(error)} ;
   } 
 }
 
@@ -122,9 +122,9 @@ export async function getSongGenres(artistIds, accessToken) {
   try {
     const response = await axios.get(apiUrl, config);
     const genres = response.data.artists.map(artist => artist.genres);
-    return genres;
+    return {data: genres, error: null};
   } catch (error) {
-    throw handleSpotifyError(error);
+    return {data: null, error: handleSpotifyError(error)};
   }
 }
 

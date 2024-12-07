@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import { useRouter } from 'next/navigation'
 
 export function useAuth() {
@@ -8,9 +8,9 @@ export function useAuth() {
 
   useEffect(() => {
     const checkLoginStatus = () => {
-      const playlistFeatures = localStorage.getItem('playlistFeatures');
+      const accessToken = localStorage.getItem('access_token');
 
-      if (!playlistFeatures) {
+      if (!accessToken) {
         router.push('/404');
       } else {
         setIsLoggedIn(true);
@@ -21,4 +21,22 @@ export function useAuth() {
   }, [router]);
 
   return { isLoggedIn };
+}
+
+export function usePlaylist() {
+  const [isGenerated, setIsGenerated] = useState(false);
+
+  useEffect(() => {
+    const checkLoginStatus = () => {
+      const playlistFeatures = localStorage.getItem('playlistFeatures');
+
+      if (playlistFeatures) {
+        setIsGenerated(true);
+      }
+    };
+
+    checkLoginStatus();
+  }, []);
+
+  return { isGenerated };
 }

@@ -22,11 +22,13 @@
     "react": "^18",
     "react-dom": "^18",
     "recharts": "^2.12.7",
+    "sonner": "^1.7.0",
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@gradio/client": "^1.5.2",
+    "@types/react": "18.3.14",
     "eslint": "^8",
     "eslint-config-next": "14.2.7",
     "postcss": "^8",

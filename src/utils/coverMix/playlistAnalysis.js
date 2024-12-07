@@ -29,11 +29,17 @@ export function analyzePlaylistFeatures(audioFeatures) {
         features[feature] /= trackCount;
     }
 
-    const getMood = (valence) => {
-        if (valence > 0.7) return 'Euphoric';
-        if (valence > 0.5) return 'Positive';
-        if (valence > 0.2) return 'Melancholic';
-        return 'Somber';
+    const getMood = (valence, energy) => {
+        if (valence > 0.7) {
+            return energy > 0.6 ? 'Euphoric' : 'Cheerful';
+        }
+        if (valence > 0.5) {
+            return energy > 0.6 ? 'Upbeat' : 'Positive';
+        }
+        if (valence > 0.3) {
+            return energy > 0.6 ? 'Motivational' : 'Melancholic';
+        }
+        return energy > 0.6 ? 'Dramatic' : 'Somber';
     };
     
     const getEnergy = (energy) => {
@@ -52,8 +58,9 @@ export function analyzePlaylistFeatures(audioFeatures) {
     const getTempo = (tempo) => {
         if (tempo > 160) return 'Frenetic';
         if (tempo > 140) return 'Upbeat';
-        if (tempo > 110) return 'Energetic';
-        if (tempo > 90) return 'Relaxed';
+        if (tempo > 120) return 'Energetic';
+        if (tempo > 100) return 'Moderate';
+        if (tempo > 80) return 'Relaxed';
         return 'Slow';
     };
     
@@ -71,7 +78,6 @@ export function analyzePlaylistFeatures(audioFeatures) {
         return 'Very Soft';
     };
     
-    // In the analyzePlaylistFeatures function:
     const mood = getMood(features.valence);
     const energy = getEnergy(features.energy);
     const acousticness = getAcousticness(features.acousticness);

@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { getAccessToken } from '@/utils/spotify/spotifyAuth';
+import { revalidatePath } from 'next/navigation';
 
 export default function CallbackPage() {
   const router = useRouter();
@@ -38,7 +39,7 @@ export default function CallbackPage() {
 
       try {
         await getAccessToken(code);
-        router.push('/'); 
+        window.location.href = '/'; 
       } catch (error) {
         console.error('Error getting access token:', error);
         router.push('/?error=authentication_failed');
